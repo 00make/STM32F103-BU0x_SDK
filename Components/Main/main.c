@@ -89,9 +89,30 @@ void init(void)
     RCC_Configuration_part();
 
     Hal_Driver_Init();
-
+    
+    // 初始化定时器
+    HalTimerInit();
+    
     App_Module_Init();
+    
+    // 启动定时器
+    HalTimerStart();
 }
+
+// 添加定时器中断处理函数
+void TIM2_IRQHandler(void)
+{
+    if(TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+    {
+        TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+        
+        // 每秒调用一次输出函数
+        result_pdoa_t result;
+        // TODO: 获取实际的测量结果
+        node_pdoa_output_user(&result);
+    }
+}
+
 /*******************************************************************************
  * 函数名  : nt_task
  * 描述    : main task

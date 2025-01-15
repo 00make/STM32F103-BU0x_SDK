@@ -35,13 +35,13 @@ bool led_test = false;
 
 void App_Module_sys_para_debug(void)
 {
-    _dbg_printf("*************************************\n");
+    // _dbg_printf("*************************************\n");
 
-    _dbg_printf("   Time: %s %s\n", __TIME__, __DATE__);
+    // _dbg_printf("   Time: %s %s\n", __TIME__, __DATE__);
 
-    _dbg_printf("   Version£ºAi-Thinker-%s\r\n", uwb_software_ver);
+    // _dbg_printf("   Version£ºAi-Thinker-%s\r\n", uwb_software_ver);
 
-    _dbg_printf("*************************************\n");
+    // _dbg_printf("*************************************\n");
 }
 
 uint32_t Check_Sum(uint32_t *Buf, uint8_t len)
