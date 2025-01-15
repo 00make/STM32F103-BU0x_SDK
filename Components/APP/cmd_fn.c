@@ -698,7 +698,8 @@ int f_rngoff(int opt, int argc, char *argv[])
  * */
 int f_filter(int opt, int argc, char *argv[])
 {
-    if (argc == 1)
+    // argc == 1
+    if (1)
     {
         app.pConfig->s.s_pdoa.motionfilter = (int16_t)atoi(argv[0]);
         return 0;

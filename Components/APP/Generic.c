@@ -140,7 +140,7 @@ void App_Module_Init(void)
 
     App_Module_sys_para_read(); // Read configuration
 
-    App_Module_sys_para_debug(); // Serial print configuration
+    // App_Module_sys_para_debug(); // Serial print configuration
 }
 
 /*
