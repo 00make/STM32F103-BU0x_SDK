@@ -40,7 +40,7 @@ int read_dev_id(void)
     Sleep(2); // Time needed for DW3000 to start up (transition from INIT_RC to IDLE_RC, or could wait for SPIRDY event)
 
     /* ¶ÁÈ¡DW3000Ä£¿édeviceID. (Reads and validate device ID returns DWT_ERROR if it does not match expected else DWT_SUCCESS) */
-    if ((err=dwt_check_dev_id())==DWT_SUCCESS)
+    if ((err = dwt_check_dev_id()) == DWT_SUCCESS)
     {
         _dbg_printf((unsigned char *)"DEV ID OK");
     }

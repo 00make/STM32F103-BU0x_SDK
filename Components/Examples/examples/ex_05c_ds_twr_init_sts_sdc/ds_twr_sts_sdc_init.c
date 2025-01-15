@@ -38,19 +38,19 @@
 
 /* Default communication configuration. We use STS with SDC DW mode. */
 static dwt_config_t config = {
-    5,               /* 信道号. Channel number. */
-    DWT_PLEN_64,    /* Preamble length. Used in TX only. */
-    DWT_PAC8,        /* Preamble acquisition chunk size. Used in RX only. */
-    9,               /* Tx前导码. TX preamble code. Used in TX only. */
-    9,               /* Rx前导码. RX preamble code. Used in RX only. */
-    1,               /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,      /* 数据速率. Data rate. */
-    DWT_PHRMODE_STD, /* 物理层头模式. PHY header mode. */
-    DWT_PHRRATE_STD, /* 物理层头速率. PHY header rate. */
-    (65 + 8 - 8),   /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    5,                                 /* 信道号. Channel number. */
+    DWT_PLEN_64,                       /* Preamble length. Used in TX only. */
+    DWT_PAC8,                          /* Preamble acquisition chunk size. Used in RX only. */
+    9,                                 /* Tx前导码. TX preamble code. Used in TX only. */
+    9,                                 /* Rx前导码. RX preamble code. Used in RX only. */
+    1,                                 /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,                        /* 数据速率. Data rate. */
+    DWT_PHRMODE_STD,                   /* 物理层头模式. PHY header mode. */
+    DWT_PHRRATE_STD,                   /* 物理层头速率. PHY header rate. */
+    (65 + 8 - 8),                      /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
     DWT_STS_MODE_1 | DWT_STS_MODE_SDC, /* STS模式. STS mode 1 with SDC see NOTE on SDC below*/
-    DWT_STS_LEN_64,/* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
-    DWT_PDOA_M0      /* PDOA mode off */
+    DWT_STS_LEN_64,                    /* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
+    DWT_PDOA_M0                        /* PDOA mode off */
 };
 /* Default antenna delay values for 64 MHz PRF. See NOTE 1 below. */
 #define TX_ANT_DLY 16385
@@ -123,22 +123,25 @@ int ds_twr_sts_sdc_init(void)
 
     /* 检查DW3000模块是否处于IDLE_RC */
     while (!dwt_checkidlerc()) /* Need to make sure DW IC is in IDLE_RC before proceeding */
-    { };
+    {
+    };
 
     /* 初始化DW3000模块 */
     if (dwt_initialise(DWT_DW_INIT) == DWT_ERROR)
     {
         _dbg_printf((unsigned char *)"INIT FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 配置DW3000信道参数. Configure DW IC. See NOTE 15 below. */
-    if(dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
+    if (dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
     {
         _dbg_printf((unsigned char *)"CONFIG FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 配置DW3000发送频谱参数. Configure the TX spectrum parameters (power, PG delay and PG count) */
@@ -165,8 +168,8 @@ int ds_twr_sts_sdc_init(void)
 
         /* 写入待发送数据到DW3000准备发送,并设置发送长度. Write frame data to DW3000 and prepare transmission. See NOTE 8 below. */
         tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
-        dwt_writetxdata(sizeof(tx_poll_msg), tx_poll_msg, 0); /* Zero offset in TX buffer. */
-        dwt_writetxfctrl(sizeof(tx_poll_msg)+FCS_LEN, 0, 1); /* Zero offset in TX buffer, ranging. */
+        dwt_writetxdata(sizeof(tx_poll_msg), tx_poll_msg, 0);  /* Zero offset in TX buffer. */
+        dwt_writetxfctrl(sizeof(tx_poll_msg) + FCS_LEN, 0, 1); /* Zero offset in TX buffer, ranging. */
 
         // 清除所有事件. clear all events
         dwt_write32bitreg(SYS_STATUS_ID, 0xFFFFFFFF);
@@ -177,7 +180,8 @@ int ds_twr_sts_sdc_init(void)
 
         /* 查询DW3000是否接受成功|接受超时|接受错误. We assume that the transmission is achieved correctly, poll for reception of a frame or error/timeout. See NOTE 9 below. */
         while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
-        { };
+        {
+        };
 
         /* Increment frame sequence number after transmission of the poll message (modulo 256). */
         frame_seq_nb++;
@@ -190,7 +194,7 @@ int ds_twr_sts_sdc_init(void)
             dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_TXFRS_BIT_MASK);
 
             // 检查STS质量. as STS is used, we only consider frames that are received with good STS quality
-            if(dwt_readstsquality(&stsqual))  //if STS is good this will be true >= 0
+            if (dwt_readstsquality(&stsqual)) // if STS is good this will be true >= 0
             {
 
                 /* 读取DW3000接收到的数据长度. A frame has been received, read it into the local buffer. */
@@ -228,7 +232,7 @@ int ds_twr_sts_sdc_init(void)
                     /* 写入待发送数据到DW3000准备发送,并设置发送长度. Write and send final message. See NOTE 8 below. */
                     tx_final_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
                     dwt_writetxdata(sizeof(tx_final_msg), tx_final_msg, 0); /* Zero offset in TX buffer. */
-                    dwt_writetxfctrl(sizeof(tx_final_msg)+FCS_LEN, 0, 1); /* Zero offset in TX buffer, ranging. */
+                    dwt_writetxfctrl(sizeof(tx_final_msg) + FCS_LEN, 0, 1); /* Zero offset in TX buffer, ranging. */
                     ret = dwt_starttx(DWT_START_TX_DELAYED);
 
                     /* If dwt_starttx() returns an error, abandon this ranging exchange and proceed to the next one. See NOTE 12 below. */
@@ -236,7 +240,8 @@ int ds_twr_sts_sdc_init(void)
                     {
                         /* 查询DW3000是否发送成功. Poll DW3000 until TX frame sent event set. See NOTE 9 below. */
                         while (!(dwt_read32bitreg(SYS_STATUS_ID) & SYS_STATUS_TXFRS_BIT_MASK))
-                        { };
+                        {
+                        };
 
                         /* 清除发送事件. Clear TXFRS event. */
                         dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS_BIT_MASK);
@@ -244,7 +249,7 @@ int ds_twr_sts_sdc_init(void)
                         /* Increment frame sequence number after transmission of the final message (modulo 256). */
                         frame_seq_nb++;
                     }
-                }//got good STS
+                } // got good STS
             }
         }
         else

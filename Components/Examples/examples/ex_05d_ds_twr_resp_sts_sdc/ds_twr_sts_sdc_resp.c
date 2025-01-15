@@ -34,19 +34,19 @@
 
 /* Default communication configuration. We use STS with SDC DW mode. */
 static dwt_config_t config = {
-    5,               /* 信道号. Channel number. */
-    DWT_PLEN_64,    /* Preamble length. Used in TX only. */
-    DWT_PAC8,        /* Preamble acquisition chunk size. Used in RX only. */
-    9,               /* Tx前导码. TX preamble code. Used in TX only. */
-    9,               /* Rx前导码. RX preamble code. Used in RX only. */
-    1,               /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,      /* 数据速率. Data rate. */
-    DWT_PHRMODE_STD, /* 物理层头模式. PHY header mode. */
-    DWT_PHRRATE_STD, /* 物理层头速率. PHY header rate. */
-    (65 + 8 - 8),   /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    5,                                 /* 信道号. Channel number. */
+    DWT_PLEN_64,                       /* Preamble length. Used in TX only. */
+    DWT_PAC8,                          /* Preamble acquisition chunk size. Used in RX only. */
+    9,                                 /* Tx前导码. TX preamble code. Used in TX only. */
+    9,                                 /* Rx前导码. RX preamble code. Used in RX only. */
+    1,                                 /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,                        /* 数据速率. Data rate. */
+    DWT_PHRMODE_STD,                   /* 物理层头模式. PHY header mode. */
+    DWT_PHRRATE_STD,                   /* 物理层头速率. PHY header rate. */
+    (65 + 8 - 8),                      /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
     DWT_STS_MODE_1 | DWT_STS_MODE_SDC, /* STS模式. STS mode 1 with SDC see NOTE on SDC below*/
-    DWT_STS_LEN_64,/* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
-    DWT_PDOA_M0      /* PDOA mode off */
+    DWT_STS_LEN_64,                    /* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
+    DWT_PDOA_M0                        /* PDOA mode off */
 };
 
 /* have some delay after each range (e.g. so LDC can be updated (on ARM eval boards), needs to be slightly less than RNG_DELAY_MS in the initiator example*/
@@ -127,22 +127,25 @@ int ds_twr_sts_sdc_resp(void)
 
     /* 检查DW3000模块是否处于IDLE_RC */
     while (!dwt_checkidlerc()) /* Need to make sure DW IC is in IDLE_RC before proceeding */
-    { };
+    {
+    };
 
     /* 初始化DW3000模块 */
     if (dwt_initialise(DWT_DW_INIT) == DWT_ERROR)
     {
         _dbg_printf((unsigned char *)"INIT FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 配置DW3000信道参数. Configure DW IC. See NOTE 15 below. */
-    if(dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
+    if (dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
     {
         _dbg_printf((unsigned char *)"CONFIG FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 配置DW3000发送频谱参数. Configure the TX spectrum parameters (power, PG delay and PG count) */
@@ -151,7 +154,6 @@ int ds_twr_sts_sdc_resp(void)
     /* 配置DW3000天线延迟参数. Apply default antenna delay value. See NOTE 1 below. */
     dwt_setrxantennadelay(RX_ANT_DLY);
     dwt_settxantennadelay(TX_ANT_DLY);
-
 
     /* 使能LNA&PA  端口. Next can enable TX/RX states output on GPIOs 5 and 6 to help debug, and also TX/RX LEDs
      * Note, in real low power applications the LEDs should not be used. */
@@ -171,7 +173,8 @@ int ds_twr_sts_sdc_resp(void)
 
         /* 查询DW3000是否接受成功|接受超时|接受错误. Poll for reception of a frame or error/timeout. See NOTE 8 below. */
         while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
-        { };
+        {
+        };
 
         if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
         {
@@ -182,7 +185,7 @@ int ds_twr_sts_sdc_resp(void)
             dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG_BIT_MASK);
 
             // 检查STS质量. as STS mode is used, we only consider frames that are received with good STS quality
-            if(dwt_readstsquality(&stsqual)) //if STS is good this will be true >= 0
+            if (dwt_readstsquality(&stsqual)) // if STS is good this will be true >= 0
             {
                 /* 读取DW3000接收到的数据长度. A frame has been received, read it into the local buffer. */
                 frame_len = dwt_read32bitreg(RX_FINFO_ID) & FRAME_LEN_MAX_EX;
@@ -214,8 +217,8 @@ int ds_twr_sts_sdc_resp(void)
 
                     /* 写入待发送数据到DW3000准备发送,并设置发送长度. Write and send the response message. See NOTE 10 below.*/
                     tx_resp_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
-                    dwt_writetxdata(sizeof(tx_resp_msg), tx_resp_msg, 0); /* Zero offset in TX buffer. */
-                    dwt_writetxfctrl(sizeof(tx_resp_msg)+FCS_LEN, 0, 1); /* Zero offset in TX buffer, ranging. */
+                    dwt_writetxdata(sizeof(tx_resp_msg), tx_resp_msg, 0);  /* Zero offset in TX buffer. */
+                    dwt_writetxfctrl(sizeof(tx_resp_msg) + FCS_LEN, 0, 1); /* Zero offset in TX buffer, ranging. */
                     /* 设置前导码超时时间PRE_TIMEOUT. Set preamble timeout for expected final frame from the initiator. See NOTE 6 below. */
                     dwt_setpreambledetecttimeout(PRE_TIMEOUT);
                     ret = dwt_starttx(DWT_START_TX_DELAYED | DWT_RESPONSE_EXPECTED);
@@ -228,7 +231,8 @@ int ds_twr_sts_sdc_resp(void)
 
                     /* 查询DW3000是否接受成功|接受超时|接受错误. Poll for reception of expected "final" frame or error/timeout. See NOTE 8 below. */
                     while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
-                    { };
+                    {
+                    };
 
                     /* Increment frame sequence number after transmission of the response message (modulo 256). */
                     frame_seq_nb++;
@@ -239,7 +243,7 @@ int ds_twr_sts_sdc_resp(void)
                         dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_TXFRS_BIT_MASK);
 
                         // 检查STS质量. as STS mode is used, we only consider frames that are received with good STS quality
-                        if(dwt_readstsquality(&stsqual))  //if STS is good this will be true >= 0
+                        if (dwt_readstsquality(&stsqual)) // if STS is good this will be true >= 0
                         {
                             /* 读取DW3000接收到的数据长度. A frame has been received, read it into the local buffer. */
                             frame_len = dwt_read32bitreg(RX_FINFO_ID) & FRAME_LEN_MAX_EX;
@@ -282,12 +286,12 @@ int ds_twr_sts_sdc_resp(void)
                                 distance = tof * SPEED_OF_LIGHT;
 
                                 /* Display computed distance on LCD. */
-                                //sprintf(dist_str, "DIST: %3.2f m", distance);
+                                // sprintf(dist_str, "DIST: %3.2f m", distance);
                                 //_dbg_printf(dist_str);
 
                                 range_ok = 1;
                             }
-                        } //if STS good on the Final message reception
+                        } // if STS good on the Final message reception
                     }
                     else
                     {
@@ -295,7 +299,7 @@ int ds_twr_sts_sdc_resp(void)
                         dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR);
                     }
                 }
-            } //if STS good on the Poll message reception
+            } // if STS good on the Poll message reception
         }
         else
         {
@@ -304,12 +308,11 @@ int ds_twr_sts_sdc_resp(void)
         }
 
         /* add some delay before next ranging exchange */
-        if(range_ok)
+        if (range_ok)
         {
             range_ok = 0;
             Sleep(DELAY_MS);
         }
-
     }
 }
 #endif

@@ -24,19 +24,19 @@
 
 /* Default communication configuration. We use default non-STS DW mode. */
 static dwt_config_t config = {
-    5,               /* 信道号. Channel number. */
-    DWT_PLEN_128,    /* Preamble length. Used in TX only. */
-    DWT_PAC8,        /* Preamble acquisition chunk size. Used in RX only. */
-    9,               /* Tx前导码. TX preamble code. Used in TX only. */
-    9,               /* Rx前导码. RX preamble code. Used in RX only. */
-    1,               /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,      /* 数据速率. Data rate. */
-    DWT_PHRMODE_STD, /* 物理层头模式. PHY header mode. */
-    DWT_PHRRATE_STD, /* 物理层头速率. PHY header rate. */
-    (129 + 8 - 8),   /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_OFF,/* STS模式. STS disabled */
-    DWT_STS_LEN_64,  /* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
-    DWT_PDOA_M0      /* PDOA mode off */
+    5,                /* 信道号. Channel number. */
+    DWT_PLEN_128,     /* Preamble length. Used in TX only. */
+    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
+    9,                /* Tx前导码. TX preamble code. Used in TX only. */
+    9,                /* Rx前导码. RX preamble code. Used in RX only. */
+    1,                /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,       /* 数据速率. Data rate. */
+    DWT_PHRMODE_STD,  /* 物理层头模式. PHY header mode. */
+    DWT_PHRRATE_STD,  /* 物理层头速率. PHY header rate. */
+    (129 + 8 - 8),    /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_OFF, /* STS模式. STS disabled */
+    DWT_STS_LEN_64,   /* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
+    DWT_PDOA_M0       /* PDOA mode off */
 };
 
 /* The frame sent in this example is an 802.15.4e standard blink. It is a 12-byte frame composed of the following fields:
@@ -86,34 +86,37 @@ int tx_timed_sleep(void)
 
     /* 检查DW3000模块是否处于IDLE_RC */
     while (!dwt_checkidlerc()) /* Need to make sure DW IC is in IDLE_RC before proceeding */
-    { };
+    {
+    };
 
     /* 初始化DW3000模块 */
     if (dwt_initialise(DWT_DW_INIT) == DWT_ERROR)
     {
         _dbg_printf((unsigned char *)"INIT FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 清除SPI就绪中断. Clearing the SPI ready interrupt*/
     dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RCINIT_BIT_MASK | SYS_STATUS_SPIRDY_BIT_MASK);
 
     /* 配置DW3000中断函数. Install DW IC IRQ handler. NOTE: the IRQ line must have a PULLDOWN or else it may trigger incorrectly when the device is sleeping*/
-//    port_set_dwic_isr(dwt_isr);
+    //    port_set_dwic_isr(dwt_isr);
 
     /* 校准和配置UWB计数. Calibrate and configure sleep count. */
     lp_osc_freq = XTAL_FREQ_HZ / dwt_calibratesleepcnt();
-    sleep_cnt = ((SLEEP_TIME_MS * ((uint32_t) lp_osc_freq)) / 1000) >> 12;
-    //sleep_cnt = 0x06; // 1 step is ~ 175ms, 6 ~= 1s
+    sleep_cnt = ((SLEEP_TIME_MS * ((uint32_t)lp_osc_freq)) / 1000) >> 12;
+    // sleep_cnt = 0x06; // 1 step is ~ 175ms, 6 ~= 1s
     dwt_configuresleepcnt(sleep_cnt);
 
     /* 配置DW3000信道参数. Configure DW IC. See NOTE 6 below. */
-    if(dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
+    if (dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
     {
         _dbg_printf((unsigned char *)"CONFIG FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 配置DW3000发送频谱参数. Configure the TX spectrum parameters (power, PG delay and PG count) */
@@ -134,7 +137,7 @@ int tx_timed_sleep(void)
     {
         /* 写入待发送数据到DW3000准备发送,并设置发送长度. Write frame data to DW IC and prepare transmission. See NOTE 4 below. */
         dwt_writetxdata(sizeof(tx_msg), tx_msg, 0); /* Zero offset in TX buffer. */
-        dwt_writetxfctrl(sizeof(tx_msg), 0, 0); /* Zero offset in TX buffer, no ranging. */
+        dwt_writetxfctrl(sizeof(tx_msg), 0, 0);     /* Zero offset in TX buffer, no ranging. */
 
         /* 立即发送. Start transmission. */
         dwt_starttx(DWT_START_TX_IMMEDIATE);
@@ -148,7 +151,8 @@ int tx_timed_sleep(void)
          * STATUS register is 4 bytes long but, as the event we are looking at is in the first byte of the register, we can use this simplest API
          * function to access it.*/
         while (!(dwt_read32bitreg(SYS_STATUS_ID) & SYS_STATUS_TXFRS_BIT_MASK))
-        {};
+        {
+        };
 
         /* 清除发送完成事件. Clear TX frame sent event. */
         dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS_BIT_MASK);
@@ -160,7 +164,9 @@ int tx_timed_sleep(void)
 
         /* In this example, there is nothing to do to wake the DW IC up as it is handled by the sleep timer. */
         while (sleeping)
-        {Sleep(1);}; /* Wait for device to wake up */
+        {
+            Sleep(1);
+        }; /* Wait for device to wake up */
 
         /* 增加延时.必要*/
         Sleep(5);
@@ -186,9 +192,10 @@ static void spi_ready_cb(const dwt_cb_data_t *cb_data)
 {
 
     while (!dwt_checkidlerc()) /* Need to make sure DW IC is in IDLE_RC before proceeding */
-    { };
+    {
+    };
 
-    sleeping = 0; //device is awake
+    sleeping = 0; // device is awake
 }
 
 #endif

@@ -14,16 +14,13 @@ extern "C"
 #include "deca_regs.h"
 #include "deca_device_api.h"
 
+	typedef struct
+	{
+		char *cmd;
+		int (*deal_func)(int opt, int argc, char *argv[]);
+	} at_cmd_t;
 
-
-
-
-typedef struct {
-	char *cmd;	
-	int (*deal_func)(int opt, int argc, char *argv[]);	
-}at_cmd_t;
-
-int at_cmd_recv(uint8_t *data,uint16_t len);
+	int at_cmd_recv(uint8_t *data, uint16_t len);
 
 #ifdef __cplusplus
 }

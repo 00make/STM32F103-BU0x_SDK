@@ -27,19 +27,19 @@
 
 /* Default communication configuration. We use default non-STS DW mode. */
 static dwt_config_t config = {
-    5,               /* 信道号. Channel number. */
-    DWT_PLEN_128,    /* Preamble length. Used in TX only. */
-    DWT_PAC8,        /* Preamble acquisition chunk size. Used in RX only. */
-    9,               /* Tx前导码. TX preamble code. Used in TX only. */
-    9,               /* Rx前导码. RX preamble code. Used in RX only. */
-    1,               /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,      /* 数据速率. Data rate. */
-    DWT_PHRMODE_STD, /* 物理层头模式. PHY header mode. */
-    DWT_PHRRATE_STD, /* 物理层头速率. PHY header rate. */
-    (129 + 8 - 8),   /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    5,                /* 信道号. Channel number. */
+    DWT_PLEN_128,     /* Preamble length. Used in TX only. */
+    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
+    9,                /* Tx前导码. TX preamble code. Used in TX only. */
+    9,                /* Rx前导码. RX preamble code. Used in RX only. */
+    1,                /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,       /* 数据速率. Data rate. */
+    DWT_PHRMODE_STD,  /* 物理层头模式. PHY header mode. */
+    DWT_PHRRATE_STD,  /* 物理层头速率. PHY header rate. */
+    (129 + 8 - 8),    /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
     DWT_STS_MODE_OFF, /* STS模式. STS disabled */
-    DWT_STS_LEN_64,  /* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
-    DWT_PDOA_M0      /* PDOA mode off */
+    DWT_STS_LEN_64,   /* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
+    DWT_PDOA_M0       /* PDOA mode off */
 };
 
 /* As "TX then wait for a response" example sends a blink message encoded as per the ISO/IEC 24730-62:2013 standard which includes a bit signalling
@@ -94,25 +94,28 @@ int rx_send_resp(void)
 
     /* 检查DW3000模块是否处于IDLE_RC */
     while (!dwt_checkidlerc()) /* Need to make sure DW IC is in IDLE_RC before proceeding */
-    { };
+    {
+    };
 
     /* 初始化DW3000模块 */
     if (dwt_initialise(DWT_DW_INIT) == DWT_ERROR)
     {
         _dbg_printf((unsigned char *)"INIT FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 使能DW3000发送/接受指示灯. Enabling LEDs here for debug so that for each TX the D1 LED will flash on DW3000 red eval-shield boards. */
-    dwt_setleds(DWT_LEDS_ENABLE | DWT_LEDS_INIT_BLINK) ;
+    dwt_setleds(DWT_LEDS_ENABLE | DWT_LEDS_INIT_BLINK);
 
     /* 配置DW3000信道参数. Configure DW IC. See NOTE 8 below. */
-    if(dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
+    if (dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
     {
         _dbg_printf((unsigned char *)"CONFIG FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 配置DW3000发送频谱参数. Configure the TX spectrum parameters (power, PG delay and PG count) */
@@ -128,7 +131,8 @@ int rx_send_resp(void)
          * STATUS register is 5 bytes long but, as the events we are looking at are in the lower bytes of the register, we can use this simplest API
          * function to access it. */
         while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_ERR)))
-        { };
+        {
+        };
 
         if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
         {
@@ -158,14 +162,15 @@ int rx_send_resp(void)
 
                 /* 写入待发送数据到DW3000准备发送,并设置发送长度. Write response frame data to DW IC and prepare transmission. See NOTE 6 below.*/
                 dwt_writetxdata(sizeof(tx_msg), tx_msg, 0); /* Zero offset in TX buffer. */
-                dwt_writetxfctrl(sizeof(tx_msg), 0, 0); /* Zero offset in TX buffer, no ranging. */
+                dwt_writetxfctrl(sizeof(tx_msg), 0, 0);     /* Zero offset in TX buffer, no ranging. */
 
                 /* 立即发送发送. Send the response. */
                 dwt_starttx(DWT_START_TX_IMMEDIATE);
 
                 /* 查询DW3000是否发送成功. Poll DW IC until TX frame sent event set. */
                 while (!(dwt_read32bitreg(SYS_STATUS_ID) & SYS_STATUS_TXFRS_BIT_MASK))
-                { };
+                {
+                };
 
                 /* 清除发送事件. Clear TX frame sent event. */
                 dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS_BIT_MASK);

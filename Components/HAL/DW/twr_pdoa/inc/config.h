@@ -20,27 +20,24 @@
 #define _CONFIG_H_
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 
 #include "default_config.h"
 #include "error.h"
 
+	/* 全局变量 */
+	typedef struct
+	{
+		param_block_t *pConfig; /**< Current configuration */
+	} app_t;
 
+	extern app_t app;
 
-/* 全局变量 */
-typedef struct
-{
-	param_block_t   *pConfig;       /**< Current configuration */
-}app_t;
-
-extern app_t app;
-
-
-void load_bssConfig(void);
-void pdoa_load_bssConfig(void);
-param_block_t *get_pbssConfig(void);
-
+	void load_bssConfig(void);
+	void pdoa_load_bssConfig(void);
+	param_block_t *get_pbssConfig(void);
 
 #ifdef __cplusplus
 }

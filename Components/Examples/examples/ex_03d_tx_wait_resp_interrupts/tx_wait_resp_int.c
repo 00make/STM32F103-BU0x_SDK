@@ -26,19 +26,19 @@
 
 /* Default communication configuration. We use default non-STS DW mode. */
 static dwt_config_t config = {
-    5,               /* 信道号. Channel number. */
-    DWT_PLEN_128,    /* Preamble length. Used in TX only. */
-    DWT_PAC8,        /* Preamble acquisition chunk size. Used in RX only. */
-    9,               /* Tx前导码. TX preamble code. Used in TX only. */
-    9,               /* Rx前导码. RX preamble code. Used in RX only. */
-    1,               /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,      /* 数据速率. Data rate. */
-    DWT_PHRMODE_STD, /* 物理层头模式. PHY header mode. */
-    DWT_PHRRATE_STD, /* 物理层头速率. PHY header rate. */
-    (129 + 8 - 8),   /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    5,                /* 信道号. Channel number. */
+    DWT_PLEN_128,     /* Preamble length. Used in TX only. */
+    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
+    9,                /* Tx前导码. TX preamble code. Used in TX only. */
+    9,                /* Rx前导码. RX preamble code. Used in RX only. */
+    1,                /* 帧分隔符模式. 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,       /* 数据速率. Data rate. */
+    DWT_PHRMODE_STD,  /* 物理层头模式. PHY header mode. */
+    DWT_PHRRATE_STD,  /* 物理层头速率. PHY header rate. */
+    (129 + 8 - 8),    /* 帧分隔符超时. SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
     DWT_STS_MODE_OFF, /* STS模式. STS disabled */
-    DWT_STS_LEN_64,  /* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
-    DWT_PDOA_M0      /* PDOA mode off */
+    DWT_STS_LEN_64,   /* STS长度. STS length see allowed values in Enum dwt_sts_lengths_e */
+    DWT_PDOA_M0       /* PDOA mode off */
 };
 
 /* The frame sent in this example is a blink encoded as per the ISO/IEC 24730-62:2013 standard. It is a 14-byte frame composed of the following fields:
@@ -102,22 +102,25 @@ int tx_wait_resp_int(void)
 
     /* 检查DW3000模块是否处于IDLE_RC */
     while (!dwt_checkidlerc()) /* Need to make sure DW IC is in IDLE_RC before proceeding */
-    { };
+    {
+    };
 
     /* 初始化DW3000模块 */
     if (dwt_initialise(DWT_DW_INIT) == DWT_ERROR)
     {
         _dbg_printf((unsigned char *)"INIT FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 配置DW3000信道参数. Configure DW IC. See NOTE 10 below. */
-    if(dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
+    if (dwt_configure(&config)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
     {
         _dbg_printf((unsigned char *)"CONFIG FAILED     ");
         while (1)
-        { };
+        {
+        };
     }
 
     /* 配置DW3000发送频谱参数. Configure the TX spectrum parameters (power, PG delay and PG count) */
@@ -128,14 +131,15 @@ int tx_wait_resp_int(void)
 
     /* 使能中断. Enable wanted interrupts (TX confirmation, RX good frames, RX timeouts and RX errors). */
     dwt_setinterrupt(SYS_ENABLE_LO_TXFRS_ENABLE_BIT_MASK | SYS_ENABLE_LO_RXFCG_ENABLE_BIT_MASK | SYS_ENABLE_LO_RXFTO_ENABLE_BIT_MASK |
-            SYS_ENABLE_LO_RXPTO_ENABLE_BIT_MASK | SYS_ENABLE_LO_RXPHE_ENABLE_BIT_MASK | SYS_ENABLE_LO_RXFCE_ENABLE_BIT_MASK |
-            SYS_ENABLE_LO_RXFSL_ENABLE_BIT_MASK | SYS_ENABLE_LO_RXSTO_ENABLE_BIT_MASK, 0, DWT_ENABLE_INT);
+                         SYS_ENABLE_LO_RXPTO_ENABLE_BIT_MASK | SYS_ENABLE_LO_RXPHE_ENABLE_BIT_MASK | SYS_ENABLE_LO_RXFCE_ENABLE_BIT_MASK |
+                         SYS_ENABLE_LO_RXFSL_ENABLE_BIT_MASK | SYS_ENABLE_LO_RXSTO_ENABLE_BIT_MASK,
+                     0, DWT_ENABLE_INT);
 
     /* 清除中断. Clearing the SPI ready interrupt*/
     dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RCINIT_BIT_MASK | SYS_STATUS_SPIRDY_BIT_MASK);
-    
+
     /* Install DW IC IRQ handler. */
-//    port_set_dwic_isr(dwt_isr);
+    //    port_set_dwic_isr(dwt_isr);
 
     /* 配置DW3000发送完成后TX_TO_RX_DELAY_UUS开启接受. Set delay to turn reception on after transmission of the frame. See NOTE 3 below. */
     dwt_setrxaftertxdelay(TX_TO_RX_DELAY_UUS);
@@ -148,17 +152,19 @@ int tx_wait_resp_int(void)
     /* Loop forever sending and receiving frames periodically. */
     while (1)
     {
-    	_dbg_printf("准备发送Tx\n");
+        _dbg_printf("准备发送Tx\n");
         /* 写入待发送数据到DW3000准备发送,并设置发送长度. Write frame data to DW IC and prepare transmission. See NOTE 7 below. */
         dwt_writetxdata(sizeof(tx_msg), tx_msg, 0); /* Zero offset in TX buffer. */
-        dwt_writetxfctrl(sizeof(tx_msg), 0, 0); /* Zero offset in TX buffer, no ranging. */
+        dwt_writetxfctrl(sizeof(tx_msg), 0, 0);     /* Zero offset in TX buffer, no ranging. */
 
         /* 立即发送发送，并有相应. Start transmission, indicating that a response is expected so that reception is enabled immediately after the frame is sent. */
         dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
 
         /* 等待中断触发事件. Wait for any RX event. */
         while (tx_delay_ms == -1)
-        {Sleep(1); };
+        {
+            Sleep(1);
+        };
 
         /* Execute the defined delay before next transmission. */
         if (tx_delay_ms > 0)
@@ -189,7 +195,7 @@ static void rx_ok_cb(const dwt_cb_data_t *cb_data)
 
     /* Clear local RX buffer to avoid having leftovers from previous receptions. This is not necessary but is included here to aid reading the RX
      * buffer. */
-    for (i = 0 ; i < FRAME_LEN_MAX; i++ )
+    for (i = 0; i < FRAME_LEN_MAX; i++)
     {
         rx_buffer[i] = 0;
     }

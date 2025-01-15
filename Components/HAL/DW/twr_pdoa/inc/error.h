@@ -13,13 +13,13 @@
 #ifndef INC_ERROR_H_
 #define INC_ERROR_H_
 
-
-typedef enum{
-    _NO_ERR       = 0,
-    _Err          = 1,
-    _Err_Busy     = 2,
-    _Err_Timeout  = 3,
-	/*TWR*/
+typedef enum
+{
+    _NO_ERR = 0,
+    _Err = 1,
+    _Err_Busy = 2,
+    _Err_Timeout = 3,
+    /*TWR*/
     _Err_Twr_Bad_State,
     _Err_Not_Twr_Frame,
     _Err_Unknown_Tag,
@@ -29,7 +29,6 @@ typedef enum{
     _No_Err_Start_Rx,
     _No_Err_Final,
     _Err_Range_Calculation,
-}error_e;
-
+} error_e;
 
 #endif /* INC_ERROR_H_ */

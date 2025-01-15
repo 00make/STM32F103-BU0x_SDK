@@ -60,7 +60,7 @@
  * SPI Rate Configuration Settings
  */
 #define CONFIG_SPI_FAST_RATE
-//#define CONFIG_SPI_SLOW_RATE
+// #define CONFIG_SPI_SLOW_RATE
 
 /*
  * Changing threshold to 5ns for DW3000 B0 red board devices.
@@ -68,7 +68,7 @@
  * A larger threshold allows for better coverage with this coverage.
  * This should be fixed for DW3000 C0 devices.
  */
-#define TS_MISMATCH_THRESHOLD 5*64       /* 64 = 1 ns --> 5 ns */
+#define TS_MISMATCH_THRESHOLD 5 * 64 /* 64 = 1 ns --> 5 ns */
 
 /*
  * Please note that a PRF of 16 MHz and a STS PRF of 64 MHz will not be supported for the DW3000.
@@ -77,147 +77,147 @@
 /* Configuration option 01.
  * Channel 5, PRF 64M, Preamble Length 64, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_01
+// #define CONFIG_OPTION_01
 
 /* Configuration option 02.
  * Channel 9, PRF 64M, Preamble Length 64, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_02
+// #define CONFIG_OPTION_02
 
 /* Configuration option 03.
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_03
+// #define CONFIG_OPTION_03
 
 /* Configuration option 04.
  * Channel 9, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_04
+// #define CONFIG_OPTION_04
 
 /* Configuration option 05.
  * Channel 5, PRF 64M, Preamble Length 512, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_05
+// #define CONFIG_OPTION_05
 
 /* Configuration option 06.
  * Channel 9, PRF 64M, Preamble Length 512, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_06
+// #define CONFIG_OPTION_06
 
 /* Configuration option 07.
  * Channel 5, PRF 64M, Preamble Length 1024, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_07
+// #define CONFIG_OPTION_07
 
 /* Configuration option 08.
  * Channel 9, PRF 64M, Preamble Length 1024, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_08
+// #define CONFIG_OPTION_08
 
 /* Configuration option 09.
  * Channel 5, PRF 64M, Preamble Length 64, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_09
+// #define CONFIG_OPTION_09
 
 /* Configuration option 10.
  * Channel 9, PRF 64M, Preamble Length 64, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_10
+// #define CONFIG_OPTION_10
 
 /* Configuration option 11.
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_11
+// #define CONFIG_OPTION_11
 
 /* Configuration option 12.
  * Channel 9, PRF 64M, Preamble Length 128, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_12
+// #define CONFIG_OPTION_12
 
 /* Configuration option 13.
  * Channel 5, PRF 64M, Preamble Length 512, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_13
+// #define CONFIG_OPTION_13
 
 /* Configuration option 14.
  * Channel 9, PRF 64M, Preamble Length 512, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_14
+// #define CONFIG_OPTION_14
 
 /* Configuration option 15.
  * Channel 5, PRF 64M, Preamble Length 1024, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_15
+// #define CONFIG_OPTION_15
 
 /* Configuration option 16.
  * Channel 9, PRF 64M, Preamble Length 1024, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_16
+// #define CONFIG_OPTION_16
 
 /* Configuration option 17.
  * Channel 5, PRF 64M, Preamble Length 64, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_17
+// #define CONFIG_OPTION_17
 
 /* Configuration option 18.
  * Channel 9, PRF 64M, Preamble Length 64, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_18
+// #define CONFIG_OPTION_18
 
 /* Configuration option 19.
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_19
+// #define CONFIG_OPTION_19
 
 /* Configuration option 20.
  * Channel 9, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_20
+// #define CONFIG_OPTION_20
 
 /* Configuration option 21.
  * Channel 5, PRF 64M, Preamble Length 512, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
-//#define CONFIG_OPTION_21
+// #define CONFIG_OPTION_21
 
 /* Configuration option 22.
  * Channel 9, PRF 64M, Preamble Length 512, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_22
+// #define CONFIG_OPTION_22
 
 /* Configuration option 23.
  * Channel 5, PRF 64M, Preamble Length 1024, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_23
+// #define CONFIG_OPTION_23
 
 /* Configuration option 24.
  * Channel 9, PRF 64M, Preamble Length 1024, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_24
+// #define CONFIG_OPTION_24
 
 /* Configuration option 25.
  * Channel 5, PRF 64M, Preamble Length 64, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_25
+// #define CONFIG_OPTION_25
 
 /* Configuration option 26.
  * Channel 9, PRF 64M, Preamble Length 64, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_26
+// #define CONFIG_OPTION_26
 
 /* Configuration option 27.
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_27
+// #define CONFIG_OPTION_27
 
 /* Configuration option 28.
  * Channel 9, PRF 64M, Preamble Length 128, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_28
+// #define CONFIG_OPTION_28
 
 /* Configuration option 29.
  * Channel 5, PRF 64M, Preamble Length 512, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_29
+// #define CONFIG_OPTION_29
 
 /* Configuration option 30.
  * Channel 9, PRF 64M, Preamble Length 512, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
@@ -227,17 +227,17 @@
 /* Configuration option 31.
  * Channel 5, PRF 64M, Preamble Length 1024, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_31
+// #define CONFIG_OPTION_31
 
 /* Configuration option 32.
  * Channel 9, PRF 64M, Preamble Length 1024, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
-//#define CONFIG_OPTION_32
+// #define CONFIG_OPTION_32
 
 /* Configuration option 33.
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 128
  */
-//#define CONFIG_OPTION_33
+// #define CONFIG_OPTION_33
 
 extern char dist_str[16];
 

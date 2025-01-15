@@ -13,20 +13,19 @@
 #define INC_CMD_FN_H_
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "stdint.h"
 
-
-
 //-----------------------------------------------------------------------------
 /* module DEFINITIONS */
-#define QUERY_CMD       0x01    /* 查询命令 */
-#define EXECUTE_CMD     0x02    /* 执行命令 */
-#define SET_CMD         0x03    /* 设置命令*/
-#define MAX_STR_SIZE       (160)
-#define ARGC_LIMIT         (32)/*最大参数数量*/
+#define QUERY_CMD 0x01   /* 查询命令 */
+#define EXECUTE_CMD 0x02 /* 执行命令 */
+#define SET_CMD 0x03     /* 设置命令*/
+#define MAX_STR_SIZE (160)
+#define ARGC_LIMIT (32) /*最大参数数量*/
 
 /* Prefer to use dynamic strings allocation.
  * however this leads every task, which uses string output,
@@ -37,37 +36,33 @@ extern "C" {
 #define DYNAMIC_MSG_STR_ALLOW
 
 #if defined(DYNAMIC_MSG_STR_ALLOW)
-#define CMD_MALLOC              malloc
-#define CMD_FREE                free
+#define CMD_MALLOC malloc
+#define CMD_FREE free
 #else
 extern char staticstr[];
 
-#define CMD_MALLOC(MAX_STR_SIZE)   staticstr
-#define CMD_FREE(x)    UNUSED(x)
+#define CMD_MALLOC(MAX_STR_SIZE) staticstr
+#define CMD_FREE(x) UNUSED(x)
 #endif
 
+    //-----------------------------------------------------------------------------
+    /* All cmd_fn functions have unified input: (char *text, param_block_t *pbss, int val)
+     * Will use REG_FN macro to declare unified functions.
+     * */
 
-//-----------------------------------------------------------------------------
-/* All cmd_fn functions have unified input: (char *text, param_block_t *pbss, int val)
- * Will use REG_FN macro to declare unified functions.
- * */
+    typedef struct
+    {
+        char *name;
+        int (*deal_func)(int opt, int argc, char *argv[]);
+    } command_t;
 
-typedef struct
-{
-    char* name;
-    int (*deal_func) (int opt, int argc, char* argv[]);
-} command_t;
+    extern const command_t known_commands[];
 
-extern const command_t known_commands[];
-
-void command_stop_received (void);
-
-
+    void command_stop_received(void);
 
 #ifdef __cplusplus
 }
 
 #endif
-
 
 #endif /* INC_CMD_FN_H_ */
