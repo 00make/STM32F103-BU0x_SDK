@@ -103,41 +103,12 @@ git clone https://gitee.com/Ai-Thinker-Open/STM32F103-BU0x_SDK.git
 
 ## 程序烧录
 
-    程序烧录有多种方式，比如：keil烧录、ST link烧录、j-flash烧录等等等。这里选用j-flash烧录介绍。
+Uart烧录软件下载(接线到TTL)
 
-### j-flash 下载
+Uart烧录软件： FlyMcu.exe
 
-    JFlash 是 Segger 公司开发的一款用于编程和调试嵌入式系统闪存的工具软件，常用于对各种微控制器和存储器进行固件编程。
-    建议前去官方网站下载对应版本的烧录软件:**<https://www.segger.com/downloads/jlink/>**
+1 选择固件，已编译出来的Hex文件
 
-![alt text](doc/img/jflash.png)
+2 点击搜索串口，选择对应的Port。
 
-### j-flash 安装
-
-    对下载的jflash进行安装，安装完成之后的j-flash界面。
-
-![alt text](doc/img/jflashopen.png)
-
-### 打开j-flash lite软件
-
-    打开j-flash lite软件
-
-![alt text](doc/img/jflashlite.png)
-
-### j-flash lite 选择STM32F103T8芯片
-
-    选择stm32f103t8芯片
-
-![alt text](doc/img/jflashstm32f103t8.png)
-
-### j-flash lite 加载烧录文件
-
-    加载烧录文件
-
-![alt text](doc/img/jflashloadprogram.png)
-
-### j-flash lite 烧录
-
-    烧录
-
-![alt text](doc/img/jflashprogram.png)
+3 长按BOOT0不松开，再按一下RESET后松开BOOT0。进入烧录模式，开始编程即可开始烧录。等待烧录完成即可。
