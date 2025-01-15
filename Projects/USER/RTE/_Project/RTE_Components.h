@@ -3,15 +3,16 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'Project'
- * Target:  'Project'
+ * Project: 'Project' 
+ * Target:  'Project' 
  */
 
 #ifndef RTE_COMPONENTS_H
 #define RTE_COMPONENTS_H
 
+
 /*
- * Define the Device Header File:
+ * Define the Device Header File: 
  */
 #define CMSIS_device_header "stm32f10x.h"
 
@@ -61,5 +62,6 @@
 #define RTE_DEVICE_STDPERIPH_USART
 /* Keil::Device:StdPeriph Drivers:WWDG:3.6.0 */
 #define RTE_DEVICE_STDPERIPH_WWDG
+
 
 #endif /* RTE_COMPONENTS_H */
