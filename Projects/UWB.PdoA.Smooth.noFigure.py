@@ -1,7 +1,5 @@
 import serial
 import json
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 import math
 import time
 
@@ -146,70 +144,18 @@ def parse_twr_data(line):
         print(f'解析错误: {e}')
 
 
-def update_plot(frame):
-    """
-    更新绘图数据。
-
-    Args:
-        frame: 动画帧数，未使用。
-    """
-    ax.clear()
-    if data_store.x_data:
-        # 绘制历史轨迹
-        ax.scatter(data_store.x_data, data_store.y_data, c='blue', s=50)
-        # 绘制当前位置
-        ax.scatter(data_store.x_data[-1], data_store.y_data[-1],
-                   c='black', s=100, label='Beacon')
-        # 绘制角度指示线
-        if data_store.last_angle is not None:
-            rad = math.radians(data_store.last_angle)
-            ax.plot([0, 100 * math.sin(rad)], [0, 100 * math.cos(rad)],
-                    'r-', label=f'{data_store.last_angle:.0f}°', linewidth=2)
-
-        # 绘制运动方向箭头
-        if len(data_store.x_data) > 1:
-            dx = data_store.x_data[-1] - data_store.x_data[-2]
-            dy = data_store.y_data[-1] - data_store.y_data[-2]
-            speed_filtered = data_store.speeds[-1] if data_store.speeds else 0
-            arrow_scale = speed_filtered * 0.1  # 根据速度调整箭头大小的比例因子
-            ax.arrow(data_store.x_data[-2], data_store.y_data[-2], dx, dy,
-                     head_width=5 * arrow_scale, head_length=8 * arrow_scale, fc='red', ec='green', length_includes_head=True)
-
-    # 设置图表属性
-    ax.grid(True)
-    ax.legend()
-    ax.set_xlabel('X (cm)')
-    ax.set_ylabel('Y (cm)')
-    ax.set_title('UWB PdoA Real-time')
-    # 动态调整坐标轴范围以包含所有数据点
-    if data_store.x_data:
-        max_x = max(data_store.x_data)
-        min_x = min(data_store.x_data)
-        max_y = max(data_store.y_data)
-        min_y = min(data_store.y_data)
-        padding = 50  # 边距
-        ax.set_xlim(min_x - padding, max_x + padding)
-        ax.set_ylim(max_y + padding, min_y - padding)
-
-
 if __name__ == '__main__':
     # 初始化数据存储对象和绘图对象
     data_store = DataStore()
-    fig, ax = plt.subplots()
 
     # 启动串口通信
     with serial.Serial('/dev/tty.usbmodem2401', 115200) as ser:
         print(f'串口 {ser.name} 已打开')
 
-        # 启动动画
-        ani = FuncAnimation(fig, update_plot, interval=100, frames=100)
-        plt.show(block=False)
-
         try:
             while True:
                 if ser.in_waiting:
                     parse_twr_data(ser.readline().decode('utf-8').strip())
-                plt.pause(0.01)
+
         except KeyboardInterrupt:
             print('\n程序已终止')
-            plt.close()

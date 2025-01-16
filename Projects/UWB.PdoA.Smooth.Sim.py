@@ -1,4 +1,3 @@
-import serial
 import json
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -138,9 +137,9 @@ def parse_twr_data(line):
         direction = data_store.directions[-1] if data_store.directions else 0
 
         # 打印信息
-        print(f'Raw: X={x:4.0f}cm, Y={y:4.0f}cm | Filtered: X={x_filtered:4.0f}cm, '
-              f'Y={y_filtered:4.0f}cm | Distance={
-                  distance:4.0f}cm, Angle={angle:4.0f}° | '
+        print(f'Raw: X={x:4.0f}cm, Y={y:4.0f}cm | '
+              f'Filtered: X={x_filtered:4.0f}cm, Y={y_filtered:4.0f}cm | '
+              f'Distance={distance:4.0f}cm, Angle={angle:4.0f}° | '
               f'Speed={speed_filtered:4.2f}cm/s, Direction={direction:4.0f}°')
     except Exception as e:
         print(f'解析错误: {e}')
