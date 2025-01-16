@@ -8,9 +8,6 @@ import csv
 from datetime import datetime
 import os
 
-# 存储历史数据
-
-yinvert = True
 
 # 创建CSV文件
 
@@ -61,7 +58,7 @@ def parse_twr_data(line):
     try:
         json_str = line[6:] if line.startswith('J') else line
         data = json.loads(json_str)['TWR']
-        x, y = data["Xcm"], -data["Ycm"] if yinvert else data["Ycm"]
+        x, y = data["Xcm"],  data["Ycm"]
         distance0 = data["D"]
         power = data["P"]
         distance = math.sqrt(x**2 + y**2)
@@ -90,7 +87,7 @@ def update_plot(frame):
     ax.legend()
     # 设置固定的显示范围
     ax.set_xlim(-200, 200)
-    ax.set_ylim(-200, 200)
+    ax.set_ylim(200, -200)
 
 
 def main():
