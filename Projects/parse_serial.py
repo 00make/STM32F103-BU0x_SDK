@@ -2,31 +2,18 @@ import serial
 import json
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import numpy as np
 import math
-import csv
 from datetime import datetime
-import os
-
 
 # 创建CSV文件
-
-
-def create_csv_file():
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f'uwb_data_{timestamp}.csv'
-    with open(filename, 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['时间戳', 'X(cm)', 'Y(cm)', '距离(cm)',
-                        '计算距离(cm)', '功率(dB)', '角度(度)'])
-    return filename
 
 
 class DataStore:
     def __init__(self):
         self.x_data = []
         self.y_data = []
-        self.csv_file = create_csv_file()
+        self.last_angle = None
+        self.cumulative_angle = 0
 
     def add_point(self, x, y):
         self.x_data.append(x)
@@ -36,18 +23,25 @@ class DataStore:
             self.x_data.pop(0)
             self.y_data.pop(0)
 
-    def save_to_csv(self, x, y, distance0, distance, power, angle):
-        with open(self.csv_file, 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
-                f"{x:.2f}",
-                f"{y:.2f}",
-                f"{distance0:.2f}",
-                f"{distance:.2f}",
-                f"{power:.2f}",
-                f"{angle:.2f}"
-            ])
+    def process_angle(self, new_angle):
+        if self.last_angle is None:
+            self.last_angle = new_angle
+            return new_angle
+
+        # 计算角度差
+        diff = new_angle - self.last_angle
+
+        # 处理角度跳变
+        if diff > 180:
+            diff -= 360
+        elif diff < -180:
+            diff += 360
+
+        # 累积角度
+        self.cumulative_angle += diff
+        self.last_angle = new_angle
+
+        return self.cumulative_angle
 
 
 data_store = DataStore()
@@ -58,17 +52,20 @@ def parse_twr_data(line):
     try:
         json_str = line[6:] if line.startswith('J') else line
         data = json.loads(json_str)['TWR']
-        x, y = data["Xcm"],  data["Ycm"]
+        x, y = data["Xcm"], data["Ycm"]
         distance0 = data["D"]
-        power = data["P"]
-        distance = math.sqrt(x**2 + y**2)
-        angle = math.atan2(x, y) * 180 / math.pi  # 使用atan2更准确
+
+        distance = math.sqrt(x**2 + y**2)  # 计算距离 这个已经滤波 比较准确了
+        raw_angle = math.atan2(x, y) * 180 / math.pi
+
+        # 处理累积角度和功率
+        angle = data_store.process_angle(raw_angle)
 
         print(f'位置: X={x}cm, Y={y}cm, distance0={distance0}cm, distance={distance:.2f}cm, '
-              f'功率={power}dB, 角度={angle:.2f}°')
+              f' 原始角度={raw_angle:.2f}°, 累积角度={angle:.2f}°')
 
         data_store.add_point(x, y)
-        data_store.save_to_csv(x, y, distance0, distance, power, angle)
+
     except Exception as e:
         print(f'解析错误: {e}')
 
@@ -76,18 +73,31 @@ def parse_twr_data(line):
 def update_plot(frame):
     ax.clear()
     if data_store.x_data:
+        # 绘制历史轨迹点
         ax.scatter(data_store.x_data, data_store.y_data, c='blue', s=50)
         # 标记最新的点
         ax.scatter(data_store.x_data[-1], data_store.y_data[-1],
                    c='red', s=100, label='Beacon')
+
+        # 获取当前的角度值
+        current_angle = data_store.last_angle
+
+        # 计算线的终点坐标
+        # 角度线（红色）- 长度固定为100
+        angle_rad = math.radians(current_angle)
+        angle_x = 100 * math.sin(angle_rad)
+        angle_y = 100 * math.cos(angle_rad)
+        ax.plot([0, angle_x], [0, angle_y], 'r-',
+                label=f'angle: {current_angle:.1f}°', linewidth=2)
+
     ax.set_xlabel('X  (cm)')
     ax.set_ylabel('Y  (cm)')
     ax.set_title('UWB PdoA Real-time')
     ax.grid(True)
     ax.legend()
     # 设置固定的显示范围
-    ax.set_xlim(-200, 200)
-    ax.set_ylim(200, -200)
+    ax.set_xlim(-100, 100)
+    ax.set_ylim(100, -100)
 
 
 def main():
