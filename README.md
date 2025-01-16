@@ -87,7 +87,7 @@ git clone https://gitee.com/Ai-Thinker-Open/STM32F103-BU0x_SDK.git
 
 解压ARMCC（即MDK5.36）到Keil_v5\ARM目录下
 
-（MDK5.36难以下载 已上传到本仓库）
+（ARMCC MDK5.36难以下载 已上传到本仓库）
 ![alt text](doc/img/keildebug-3.png)
 点击Manage Project Items
 ![alt text](doc/img/keildebug-1.png)

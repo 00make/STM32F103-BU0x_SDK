@@ -1,0 +1,12 @@
+{
+    "workbench.editorAssociations": {
+        "*.copilotmd": "vscode.markdown.preview.editor",
+        "{hexdiff}:/**/*.*": "hexEditor.hexedit",
+        "*.jpg": "imagePreview.previewEditor",
+        "*.csv": "default",
+        "*.ipynb": "jupyter.notebook.ipynb",
+        "*.png": "imagePreview.previewEditor",
+        "*.stl": "3dviewer.editor",
+        "file:/**/*.csv": "jupyter-data-wrangler"
+    }
+}
