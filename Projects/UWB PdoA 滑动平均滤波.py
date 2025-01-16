@@ -62,7 +62,7 @@ class DataStore:
         self.timestamps.append(timestamp)
 
         # 只保留最近的 200 个点
-        if len(self.x_data) > 200:
+        if len(self.x_data) > 150:
             self.x_data.pop(0)
             self.y_data.pop(0)
             self.timestamps.pop(0)
