@@ -32,7 +32,7 @@ class DataStore:
 
         self.x_data.append(x_filtered)
         self.y_data.append(y_filtered)
-        if len(self.x_data) > 50:  # 只保留最近的50个点
+        if len(self.x_data) > 100:  # 只保留最近的50个点
             self.x_data.pop(0)
             self.y_data.pop(0)
 
@@ -101,7 +101,7 @@ def update_plot(frame):
 
 
 def main():
-    ani = FuncAnimation(fig, update_plot, interval=100)
+    ani = FuncAnimation(fig, update_plot, interval=100, frames=100)
     plt.show(block=False)
 
     with serial.Serial('/dev/tty.usbmodem2401', 115200) as ser:
