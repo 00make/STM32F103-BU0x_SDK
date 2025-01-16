@@ -3,57 +3,10 @@ import json
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import math
-import numpy as np
 
-
-# n_particles: 增加粒子数量可以提高精度，但会增加计算负担
-# 预测步骤中的噪声大小（0.5）：增大会使跟踪更敏感，减小会使轨迹更平滑
-
-
-class ParticleFilter:
-    def __init__(self, n_particles=100):
-        self.n_particles = n_particles
-        self.particles = None
-        self.weights = np.ones(n_particles) / n_particles
-        self.initialized = False
-
-    def initialize(self, x, y):
-        # 初始化粒子，在初始位置周围添加少量噪声
-        self.particles = np.random.normal(
-            loc=np.array([[x, y]]),
-            scale=np.array([[1.0, 1.0]]),
-            size=(self.n_particles, 2)
-        )
-        self.initialized = True
-
-    def predict(self):
-        # 添加过程噪声
-        self.particles += np.random.normal(0, 0.5, self.particles.shape)
-
-    def update(self, measurement):
-        if not self.initialized:
-            self.initialize(measurement[0], measurement[1])
-            return measurement
-
-        # 预测步骤
-        self.predict()
-
-        # 计算每个粒子的权重
-        diff = self.particles - measurement
-        self.weights = np.exp(-0.5 * np.sum(diff**2, axis=1))
-        self.weights += 1e-300  # 防止权重为0
-        self.weights /= sum(self.weights)  # 归一化
-
-        # 重采样
-        indices = np.random.choice(
-            self.n_particles,
-            self.n_particles,
-            p=self.weights
-        )
-        self.particles = self.particles[indices]
-
-        # 返回状态估计（加权平均）
-        return np.average(self.particles, weights=self.weights, axis=0)
+# 增大window_size会使滤波更平滑，但会增加延时
+# 减小window_size会减少延时，但滤波效果会减弱
+# 当前设置为5，您可以根据实际需求调整
 
 
 class DataStore:
@@ -61,12 +14,21 @@ class DataStore:
         self.x_data = []
         self.y_data = []
         self.last_angle = None
-        self.particle_filter = ParticleFilter(n_particles=100)
+        # 滑动平均窗口
+        self.window_size = 5
+        self.x_window = []
+        self.y_window = []
+
+    def moving_average(self, value, window):
+        window.append(value)
+        if len(window) > self.window_size:
+            window.pop(0)
+        return sum(window) / len(window)
 
     def add_point(self, x, y):
-        # 使用粒子滤波进行平滑
-        filtered_pos = self.particle_filter.update(np.array([x, y]))
-        x_filtered, y_filtered = filtered_pos
+        # 应用滑动平均滤波
+        x_filtered = self.moving_average(x, self.x_window)
+        y_filtered = self.moving_average(y, self.y_window)
 
         self.x_data.append(x_filtered)
         self.y_data.append(y_filtered)
